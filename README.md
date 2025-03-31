@@ -2,165 +2,265 @@
 
 StockSage AI is an advanced financial analysis tool that combines the power of Agno's agent framework, Financial Modeling Prep's market data, and OpenAI's language models to provide comprehensive stock analysis and insights.
 
+## 🗺️ Project Architecture
+
+This project follows a client-server architecture with a clear separation of concerns:
+
+```
+financial_news_analyzer/
+├── src/                     # Core Python backend for financial analysis
+│   ├── main.py              # Entry point for the analyzer
+│   ├── agents/              # Agent framework modules
+│   ├── integrations/        # External API integrations
+│   └── utils/               # Helper utilities
+├── server.py                # Flask API server (middleware)
+├── stocksage-dashboard/     # Next.js frontend application
+│   ├── src/
+│   │   ├── app/             # Next.js pages and routes
+│   │   ├── components/      # React components
+│   │   └── lib/             # Utility functions and services
+│   ├── public/              # Static assets
+│   └── package.json         # Frontend dependencies
+├── analysis_results/        # Storage for analysis outputs
+├── requirements.txt         # Python dependencies
+└── README.md                # Project documentation
+```
+
+### Data Flow Architecture
+
+The system works as follows:
+
+1. **User Interface Layer** (Next.js)
+   - User enters a stock symbol in the search bar
+   - Dashboard displays analysis results and visualizations
+
+2. **API Layer** (Flask)
+   - Receives analysis requests from the frontend
+   - Manages analyzed stocks data
+   - Calls the financial analyzer backend
+
+3. **Analysis Layer** (Python)
+   - Fetches market data from Financial Modeling Prep API
+   - Retrieves news from various sources
+   - Uses OpenAI GPT-4 to analyze sentiment and generate insights
+   - Calculates technical indicators
+   - Produces comprehensive analysis output
+
+4. **Storage Layer**
+   - Analysis results are saved as JSON files
+
+### Component Connections
+
+- **Frontend → API**: The Next.js dashboard makes HTTP requests to the Flask API at http://localhost:5001/analyze and http://localhost:5001/stocks
+- **API → Analyzer**: The Flask server executes the Python analyzer via subprocess
+- **Analyzer → External APIs**: The Python backend connects to FMP API and OpenAI API
+- **API → Storage**: Analysis results are saved to and loaded from the analysis_results directory
+
 ## 🚀 Features
 
 - **Real-time Market Data Analysis**: Leverages Financial Modeling Prep API to fetch current market metrics
 - **AI-Powered News Analysis**: Uses OpenAI's GPT-4 to analyze news sentiment and market trends
 - **Technical Indicators**: Calculates key technical indicators like RSI and SMA
 - **Beautiful Visualization**: Clean, responsive UI for displaying analysis results
-- **Comprehensive Reports**: Generates detailed analysis reports with actionable insights
+- **Interactive Dashboard**: Web-based interface to search and analyze stocks
 
-## 🛠️ Technology Stack
+## 🛠️ Setup and Installation
 
-### Core Components
-1. **Agno Framework**
-   - Provides the agent architecture for autonomous analysis
-   - Handles task orchestration and execution flow
-   - Manages state and context during analysis
-
-2. **Financial Modeling Prep API**
-   - Real-time stock price data
-   - Company financial metrics
-   - Market indicators and ratios
-   - Historical data for technical analysis
-
-3. **OpenAI GPT-4**
-   - News sentiment analysis
-   - Market trend interpretation
-   - Natural language report generation
-   - Context-aware recommendations
-
-## 📊 Analysis Components
-
-1. **Market Data Analysis**
-   - Current price and changes
-   - Trading volume
-   - Market capitalization
-   - P/E ratio and other key metrics
-
-2. **Technical Analysis**
-   - 50-day Simple Moving Average (SMA)
-   - Relative Strength Index (RSI)
-   - Support and resistance levels
-   - Trend indicators
-
-3. **News Sentiment Analysis**
-   - Real-time news aggregation
-   - Sentiment scoring
-   - Impact assessment
-   - Trend correlation
-
-## 🔄 How It Works
-
-1. **Data Collection**
-   ```python
-   # Agno agent fetches market data
-   async def fetch_market_data(self):
-       return await self.fmp_client.get_quote(symbol)
-   ```
-
-2. **Analysis Pipeline**
-   ```python
-   # OpenAI processes market context
-   async def analyze_market_context(self):
-       response = await self.openai.analyze(
-           market_data=self.data,
-           news_items=self.news
-       )
-   ```
-
-3. **Report Generation**
-   ```python
-   # Agno combines all analyses
-   async def generate_report(self):
-       return await self.agent.execute(
-           market_analysis=self.market_data,
-           technical_indicators=self.indicators,
-           sentiment_analysis=self.sentiment
-       )
-   ```
-
-## 🌟 Key Differentiators
-
-1. **Agno Integration**
-   - Autonomous agent-based architecture
-   - Structured task execution
-   - Context-aware processing
-   - Error handling and recovery
-
-2. **Financial Modeling Prep**
-   - Enterprise-grade financial data
-   - Real-time market updates
-   - Comprehensive company metrics
-   - Historical data access
-
-3. **OpenAI Capabilities**
-   - Advanced language understanding
-   - Context-aware analysis
-   - Natural language generation
-   - Pattern recognition
-
-## 📈 Output Format
-
-The analysis results are presented in two formats:
-1. **JSON Data**: Structured data for programmatic use
-2. **HTML Report**: Beautiful, responsive visualization of analysis
-
-## 🚀 Getting Started
+### Backend Setup
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/stocksage-ai.git
+   git clone https://github.com/Aary03/stocksage-ai.git
+   cd stocksage-ai
    ```
 
-2. Install dependencies:
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Set up environment variables:
+4. Set up environment variables:
    ```bash
-   OPENAI_API_KEY=your_key
-   FMP_API_KEY=your_key
+   export OPENAI_API_KEY=your_key
+   export FMP_API_KEY=your_key
    ```
 
-4. Run analysis:
+5. Install Flask for the API server:
    ```bash
-   python -m src.main SYMBOL -o output_dir
+   pip install flask flask-cors
    ```
 
-## 📊 Example Output
+### Running the Backend
 
-```json
-{
+1. Start the Flask API server:
+   ```bash
+   python server.py
+   ```
+
+This will start the backend API server at http://localhost:5001.
+
+### Frontend Setup
+
+1. Navigate to the dashboard directory:
+   ```bash
+   cd stocksage-dashboard
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+### Running the Frontend
+
+1. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+This will start the Next.js app at http://localhost:3000.
+
+## 📊 Using the Dashboard
+
+1. Open http://localhost:3000 in your browser
+2. Use the search bar to analyze a stock by symbol (e.g., AAPL, NFLX, TSLA)
+3. Click "Analyze" to use the AI agent to analyze the stock
+4. View detailed analysis including:
+   - Market data
+   - Technical indicators
+   - News sentiment analysis
+   - AI recommendations
+
+## 🔌 API Endpoints
+
+The backend provides these API endpoints:
+
+- `POST /analyze`: Analyze a stock by symbol
+  ```json
+  {
+    "symbol": "AAPL"
+  }
+  ```
+  
+  Response:
+  ```json
+  {
+    "symbol": "AAPL",
     "market_data": {
-        "price": 933.85,
-        "change": -42.87,
-        "volume": 4422717,
-        "market_cap": "399.46B"
+      "price": 217.9,
+      "change": -5.95,
+      "change_percent": -2.65803,
+      "volume": 39818617,
+      "timestamp": "2025-03-31T13:02:29.380172",
+      "high_52w": 260.1,
+      "low_52w": 164.08,
+      "market_cap": 3273315590000,
+      "pe_ratio": 31.26
     },
     "technical_indicators": {
-        "sma_50": 967.40,
-        "rsi": 46.10
+      "sma_50": 230.372,
+      "rsi": 41.50
     },
-    "recommendation": "Hold",
-    "risk_level": "Moderate"
-}
-```
+    "news_analysis": {
+      "items": [...],
+      "sentiment_analysis": {
+        "overall": 0.5
+      }
+    },
+    "summary": "...",
+    "risk_assessment": {
+      "overall": "Moderate"
+    },
+    "recommendations": [
+      "Hold"
+    ]
+  }
+  ```
 
-## 🔒 Security
+- `GET /stocks`: Get a list of all analyzed stocks
+  
+  Response:
+  ```json
+  [
+    {
+      "symbol": "AAPL",
+      "timestamp": "2025-03-31T13:03:04.866158",
+      "market_data": {
+        "price": 217.9
+      },
+      "recommendation": "Hold"
+    },
+    ...
+  ]
+  ```
 
-- API keys are managed securely through environment variables
-- Rate limiting implemented for API calls
-- Error handling for API failures
+## 📦 Key Components
 
-## 🤝 Contributing
+### Backend (Python)
 
-Contributions are welcome! Please read our contributing guidelines before submitting pull requests.
+1. **Financial News Analyzer**
+   - Located in `src/main.py`
+   - Uses Agno agent framework for orchestration
+   - Makes API calls to fetch data and analyze stocks
+
+2. **Flask API Server**
+   - Located in `server.py`
+   - Provides RESTful endpoints for the frontend
+   - Handles running the analyzer process and returning results
+
+### Frontend (Next.js + React)
+
+1. **Dashboard Layout**
+   - Components: `DashboardLayout.tsx`, `Header.tsx`, `Sidebar.tsx`
+   - Provides the UI structure for the application
+
+2. **Stock Service**
+   - Located in `src/lib/stock-service.ts`
+   - Handles communication with the backend API
+   - Manages stock analysis data
+
+3. **Pages**
+   - Home page: Displays recent analyses and search functionality
+   - Stock detail page: Shows comprehensive analysis for a specific stock
+
+## 🏗️ Technology Stack
+
+### Backend
+- **Python 3.11+**: Core programming language
+- **OpenAI API**: For AI analysis and natural language processing
+- **Financial Modeling Prep API**: For market data
+- **Flask**: For API server
+- **Flask-CORS**: For cross-origin resource sharing
+
+### Frontend
+- **Next.js 14**: React framework for building the UI
+- **React 18**: UI library
+- **TypeScript**: For type-safe code
+- **Tailwind CSS**: For styling
+- **Recharts**: For data visualization
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 📊 Implementation Plan
+
+Future enhancements planned:
+1. Add interactive charts with Recharts
+2. Implement real-time price updates via WebSockets
+3. Add portfolio tracking
+4. Add alerts for price movements
+5. Enhance the UI with responsive design for mobile
+
+## 👥 Contributing
+
+Contributions are welcome! Please read our contributing guidelines before submitting pull requests. 
 
 Market Data (FMP API) ─┐
 News Articles ─────────┼─► Agno Agent ─► OpenAI Analysis ─► Final Report

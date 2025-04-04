@@ -21,7 +21,6 @@ export default function StockDetail({ params }: StockDetailProps) {
     const existingData = getStockAnalysis(symbol);
     if (existingData) {
       setStockData(existingData);
-      return;
     }
 
     // If not, show the analysis request UI
